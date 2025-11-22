@@ -16,7 +16,7 @@ var (
 
 // create category
 // encore:api public path=/api/categories method=POST
-func CreateCategory(ctx context.Context, request CreateCategoryRequest) (*CreateCategoryResponse, error) {
+func CreateCategory(ctx context.Context, request CreateCategoryRequest) (*Response, error) {
 	// Validate input
 	request.Name = strings.TrimSpace(request.Name)
 	if request.Name == "" {
@@ -44,8 +44,8 @@ func CreateCategory(ctx context.Context, request CreateCategoryRequest) (*Create
 		return nil, errs.WrapCode(err, errs.Internal, "failed to create category")
 	}
 
-	return &CreateCategoryResponse{
-		Category: category,
+	return &Response{
+		Message: "Category created successfully",
 	}, nil
 }
 
@@ -87,6 +87,18 @@ func checkIfCategoryExists(ctx context.Context, name string) (bool, error) {
 	err := db.QueryRow(ctx, `
 		SELECT EXISTS(SELECT 1 FROM categories WHERE name = $1)
 	`, name).Scan(&exists)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
+}
+
+// check if category exists by id
+func checkIfCategoryExistsById(ctx context.Context, id string) (bool, error) {
+	var exists bool
+	err := db.QueryRow(ctx, `
+		SELECT EXISTS(SELECT 1 FROM categories WHERE id = $1)
+	`, id).Scan(&exists)
 	if err != nil {
 		return false, err
 	}
