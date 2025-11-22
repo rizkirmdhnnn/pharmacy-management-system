@@ -19,6 +19,11 @@ type CreateProductRequest struct {
 	BasePrice   float64 `json:"base_price"`
 }
 
+// GetAllProductsResponse represents the response for listing products
+type GetAllProductsResponse struct {
+	Products []Product `json:"products"`
+}
+
 // Response represents the response for all endpoints
 type Response struct {
 	Message string `json:"message"`
