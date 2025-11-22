@@ -26,6 +26,13 @@ func World(ctx context.Context, name string) (*Response, error) {
 	return &Response{Message: msg}, nil
 }
 
+// test api
+//
+//encore:api public path=/test
+func Test(ctx context.Context) (*Response, error) {
+	return &Response{Message: "Test"}, nil
+}
+
 type Response struct {
 	Message string
 }
