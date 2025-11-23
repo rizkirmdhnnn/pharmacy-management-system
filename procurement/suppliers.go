@@ -18,7 +18,6 @@ type Supplier struct {
 	Address       string    `json:"address"`
 	City          string    `json:"city"`
 	Country       string    `json:"country"`
-	TaxID         string    `json:"tax_id"`
 	IsActive      bool      `json:"is_active"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
@@ -40,10 +39,10 @@ func CreateSupplier(ctx context.Context, req *CreateSupplierRequest) (Response, 
 	// Create supplier
 	var supplierID uuid.UUID
 	err = db.QueryRow(ctx, `
-		INSERT INTO suppliers (name, contact_person, email, phone, address, city, country, tax_id, is_active) 
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) 
+		INSERT INTO suppliers (name, contact_person, email, phone, address, city, country, is_active) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
 		RETURNING id
-	`, req.Name, req.ContactPerson, req.Email, req.Phone, req.Address, req.City, req.Country, req.TaxID, true).Scan(&supplierID)
+	`, req.Name, req.ContactPerson, req.Email, req.Phone, req.Address, req.City, req.Country, true).Scan(&supplierID)
 	if err != nil {
 		return Response{Message: "Failed to create supplier"}, err
 	}
@@ -57,7 +56,7 @@ func CreateSupplier(ctx context.Context, req *CreateSupplierRequest) (Response, 
 func GetAllSuppliers(ctx context.Context) (ListSuppliersResponse, error) {
 	var listSuppliersResponse ListSuppliersResponse
 	rows, err := db.Query(ctx, `
-		SELECT id, name, contact_person, email, phone, address, city, country, tax_id, is_active
+		SELECT id, name, contact_person, email, phone, address, city, country, is_active
 		FROM suppliers 
 		ORDER BY name
 	`)
@@ -80,7 +79,6 @@ func GetAllSuppliers(ctx context.Context) (ListSuppliersResponse, error) {
 			&supplier.Address,
 			&supplier.City,
 			&supplier.Country,
-			&supplier.TaxID,
 			&supplier.IsActive,
 		)
 		if err != nil {
@@ -105,7 +103,7 @@ func GetAllSuppliers(ctx context.Context) (ListSuppliersResponse, error) {
 func GetSupplier(ctx context.Context, id uuid.UUID) (SupplierResponse, error) {
 	var supplier SupplierListItem
 	err := db.QueryRow(ctx, `
-		SELECT id, name, contact_person, email, phone, address, city, country, tax_id, is_active
+		SELECT id, name, contact_person, email, phone, address, city, country, is_active
 		FROM suppliers 
 		WHERE id = $1
 	`, id).Scan(
@@ -117,7 +115,6 @@ func GetSupplier(ctx context.Context, id uuid.UUID) (SupplierResponse, error) {
 		&supplier.Address,
 		&supplier.City,
 		&supplier.Country,
-		&supplier.TaxID,
 		&supplier.IsActive,
 	)
 	if err != nil {

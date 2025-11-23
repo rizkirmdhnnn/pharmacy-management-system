@@ -152,6 +152,33 @@ func GetAllProducts(ctx context.Context) (*ProductResponse, error) {
 	return &ProductResponse{Message: "Products retrieved successfully", Data: products}, nil
 }
 
+// GetProduct retrieves a product by ID
+//
+//encore:api public method=GET path=/api/products/:id
+func GetProduct(ctx context.Context, id uuid.UUID) (*Product, error) {
+	var product Product
+	err := db.QueryRow(ctx, `
+		SELECT id, name, category_id, description, base_price, min_stock_level, barcode, is_active, created_at, updated_at 
+		FROM products 
+		WHERE id = $1
+	`, id).Scan(
+		&product.ID,
+		&product.Name,
+		&product.CategoryID,
+		&product.Description,
+		&product.BasePrice,
+		&product.MinStockLevel,
+		&product.Barcode,
+		&product.IsActive,
+		&product.CreatedAt,
+		&product.UpdatedAt,
+	)
+	if err != nil {
+		return nil, errors.New("product not found")
+	}
+	return &product, nil
+}
+
 // IsProductExists checks if a product with the given name already exists
 func IsProductExists(ctx context.Context, name string) (bool, error) {
 	var count int
