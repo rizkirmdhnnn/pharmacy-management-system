@@ -25,3 +25,11 @@ CREATE INDEX idx_batches_expiration_date ON batches(expiration_date);
 CREATE INDEX idx_batches_batch_number ON batches(batch_number);
 CREATE INDEX idx_batches_supplier_id ON batches(supplier_id);
 CREATE INDEX idx_batches_purchase_id ON batches(purchase_id);
+
+-- Insert dummy data (5 batches)
+INSERT INTO batches (product_id, batch_number, quantity, purchase_price, selling_price, expiration_date) VALUES
+((SELECT id FROM products WHERE name = 'Paracetamol 500mg' LIMIT 1), 'BATCH-001', 500, 4000.00, 5000.00, CURRENT_DATE + INTERVAL '2 years'),
+((SELECT id FROM products WHERE name = 'Vitamin C 1000mg' LIMIT 1), 'BATCH-002', 200, 12000.00, 15000.00, CURRENT_DATE + INTERVAL '1 year'),
+((SELECT id FROM products WHERE name = 'Bandage Roll 5cm' LIMIT 1), 'BATCH-003', 1000, 6000.00, 8000.00, CURRENT_DATE + INTERVAL '3 years'),
+((SELECT id FROM products WHERE name = 'Face Mask 3-Ply' LIMIT 1), 'BATCH-004', 2000, 2000.00, 3000.00, CURRENT_DATE + INTERVAL '2 years'),
+((SELECT id FROM products WHERE name = 'Baby Shampoo 200ml' LIMIT 1), 'BATCH-005', 150, 20000.00, 25000.00, CURRENT_DATE + INTERVAL '1 year');

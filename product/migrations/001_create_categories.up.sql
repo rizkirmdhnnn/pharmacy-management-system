@@ -10,3 +10,11 @@ CREATE TABLE categories (
 
 -- Create indexes
 CREATE INDEX idx_categories_name ON categories(name);
+
+-- Insert dummy data (5 categories)
+INSERT INTO categories (name, description) VALUES
+('Medications', 'Prescription and over-the-counter medications'),
+('Vitamins & Supplements', 'Vitamins, minerals, and dietary supplements'),
+('Medical Supplies', 'Bandages, syringes, and medical equipment'),
+('Personal Care', 'Skincare, hygiene, and personal care products'),
+('Baby Care', 'Baby products and infant care items');
