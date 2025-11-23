@@ -24,7 +24,10 @@ func GetAllCategories(ctx context.Context) (ListCategoriesResponse, error) {
 	var listCategoriesResponse ListCategoriesResponse
 	rows, err := db.Query(ctx, "SELECT id, name, description FROM categories")
 	if err != nil {
-		return ListCategoriesResponse{Message: "Failed to retrieve categories"}, errors.New("failed to retrieve categories")
+		return ListCategoriesResponse{
+			Message: "Failed to retrieve categories",
+			Data:    []CategoryListItem{},
+		}, errors.New("failed to retrieve categories")
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -39,7 +42,10 @@ func GetAllCategories(ctx context.Context) (ListCategoriesResponse, error) {
 		}
 		listCategoriesResponse.Data = append(listCategoriesResponse.Data, category)
 	}
-	return listCategoriesResponse, nil
+	return ListCategoriesResponse{
+		Message: "Categories retrieved successfully",
+		Data:    listCategoriesResponse.Data,
+	}, nil
 }
 
 // IsCategoryExists checks if a category with the given name already exists
