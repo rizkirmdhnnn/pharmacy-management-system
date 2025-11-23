@@ -17,6 +17,21 @@ type CategoryListItem struct {
 	Description string    `json:"description"`
 }
 
+type CreateCategoryRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+func (c *CreateCategoryRequest) Validate() error {
+	if c.Name == "" {
+		return errors.New("name is required")
+	}
+	if len(c.Name) > 255 {
+		return errors.New("name must be less than 255 characters")
+	}
+	return nil
+}
+
 type ListCategoriesResponse struct {
 	Message string             `json:"message"`
 	Data    []CategoryListItem `json:"data"`

@@ -19,7 +19,7 @@ type Category struct {
 
 // GetAllCategories retrieves all categories
 //
-//encore:api public method=GET path=/api/categories
+//encore:api public  method=GET path=/api/categories
 func GetAllCategories(ctx context.Context) (ListCategoriesResponse, error) {
 	var listCategoriesResponse ListCategoriesResponse
 	rows, err := db.Query(ctx, "SELECT id, name, description FROM categories")
@@ -45,6 +45,36 @@ func GetAllCategories(ctx context.Context) (ListCategoriesResponse, error) {
 	return ListCategoriesResponse{
 		Message: "Categories retrieved successfully",
 		Data:    listCategoriesResponse.Data,
+	}, nil
+}
+
+// CreateCategory creates a new category
+//
+//encore:api public method=POST path=/api/categories
+func CreateCategory(ctx context.Context, category *CreateCategoryRequest) (*Response, error) {
+	// Check if category already exists
+	exists, err := IsCategoryExists(ctx, category.Name)
+	if err != nil {
+		return &Response{
+			Message: "Failed to check if category already exists",
+		}, err
+	}
+	if exists {
+		return &Response{
+			Message: "Category with this name already exists",
+		}, nil
+	}
+
+	// Create category
+	var categoryID uuid.UUID
+	err = db.QueryRow(ctx, "INSERT INTO categories (name, description) VALUES ($1, $2) RETURNING id", category.Name, category.Description).Scan(&categoryID)
+	if err != nil {
+		return &Response{
+			Message: "Failed to create category",
+		}, err
+	}
+	return &Response{
+		Message: "Category created successfully",
 	}, nil
 }
 
